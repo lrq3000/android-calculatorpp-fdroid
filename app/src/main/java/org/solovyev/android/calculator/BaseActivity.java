@@ -26,7 +26,6 @@ import android.view.Window;
 import android.widget.TextView;
 
 import org.solovyev.android.Check;
-import org.solovyev.android.calculator.ga.Ga;
 import org.solovyev.android.calculator.language.Language;
 import org.solovyev.android.calculator.language.Languages;
 import org.solovyev.android.calculator.view.Tabs;
@@ -55,8 +54,6 @@ public abstract class BaseActivity extends AppCompatActivity implements SharedPr
     @Inject
     Calculator calculator;
     @Inject
-    Lazy<Ga> ga;
-    @Inject
     Typeface typeface;
     @BindView(R.id.main)
     ViewGroup mainView;
@@ -82,14 +79,6 @@ public abstract class BaseActivity extends AppCompatActivity implements SharedPr
         this.layoutId = layoutId;
         this.titleId = titleId;
         this.tabs = new Tabs(this);
-    }
-
-    public void reportActivityStop(@Nonnull Activity activity) {
-        ga.get().getAnalytics().reportActivityStop(activity);
-    }
-
-    public void reportActivityStart(@Nonnull Activity activity) {
-        ga.get().getAnalytics().reportActivityStart(activity);
     }
 
     public static void setFont(@Nonnull View view, @Nonnull Typeface newTypeface) {
@@ -207,18 +196,6 @@ public abstract class BaseActivity extends AppCompatActivity implements SharedPr
     }
 
     protected void inject(@Nonnull AppComponent component) {
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        reportActivityStart(this);
-    }
-
-    @Override
-    protected void onStop() {
-        reportActivityStop(this);
-        super.onStop();
     }
 
     @Override

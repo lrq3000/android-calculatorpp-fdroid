@@ -36,7 +36,6 @@ import android.support.v7.app.AppCompatActivity;
 import org.solovyev.android.calculator.App;
 import org.solovyev.android.calculator.BaseDialogFragment;
 import org.solovyev.android.calculator.R;
-import org.solovyev.android.calculator.ga.Ga;
 import org.solovyev.android.checkout.ActivityCheckout;
 import org.solovyev.android.checkout.Billing;
 import org.solovyev.android.checkout.BillingRequests;
@@ -53,8 +52,6 @@ public class PurchaseDialogActivity extends AppCompatActivity implements Request
 
     @Inject
     Billing billing;
-    @Inject
-    Ga ga;
     ActivityCheckout checkout;
 
     @Override
@@ -70,18 +67,6 @@ public class PurchaseDialogActivity extends AppCompatActivity implements Request
         checkout = Checkout.forActivity(this, billing);
         checkout.start();
         checkout.createPurchaseFlow(this);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        ga.getAnalytics().reportActivityStart(this);
-    }
-
-    @Override
-    protected void onStop() {
-        ga.getAnalytics().reportActivityStop(this);
-        super.onStop();
     }
 
     private void purchase() {

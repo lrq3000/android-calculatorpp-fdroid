@@ -35,7 +35,6 @@ import com.squareup.otto.Subscribe;
 
 import org.solovyev.android.Check;
 import org.solovyev.android.calculator.buttons.CppSpecialButton;
-import org.solovyev.android.calculator.ga.Ga;
 import org.solovyev.android.calculator.history.History;
 import org.solovyev.android.calculator.math.MathType;
 import org.solovyev.android.calculator.memory.Memory;
@@ -69,8 +68,6 @@ public class Keyboard implements SharedPreferences.OnSharedPreferenceChangeListe
     Calculator calculator;
     @Inject
     Engine engine;
-    @Inject
-    Lazy<Ga> ga;
     @Inject
     Lazy<Clipboard> clipboard;
     @Inject
@@ -112,13 +109,11 @@ public class Keyboard implements SharedPreferences.OnSharedPreferenceChangeListe
             final char glyph = text.charAt(0);
             final CppSpecialButton button = CppSpecialButton.getByGlyph(glyph);
             if (button != null) {
-                ga.get().onButtonPressed(button.action);
                 handleSpecialAction(button);
                 return true;
             }
         }
 
-        ga.get().onButtonPressed(text);
         if (!processSpecialAction(text)) {
             processText(prepareText(text));
         }

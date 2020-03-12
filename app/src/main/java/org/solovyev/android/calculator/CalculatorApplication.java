@@ -33,7 +33,6 @@ import android.util.TimingLogger;
 import com.squareup.otto.Bus;
 
 import org.solovyev.android.calculator.floating.FloatingCalculatorActivity;
-import org.solovyev.android.calculator.ga.Ga;
 import org.solovyev.android.calculator.history.History;
 import org.solovyev.android.calculator.language.Language;
 import org.solovyev.android.calculator.language.Languages;
@@ -49,27 +48,6 @@ import dagger.Lazy;
 import jscl.MathEngine;
 
 public class CalculatorApplication extends android.app.Application implements SharedPreferences.OnSharedPreferenceChangeListener {
-
-    // delayed GA reporting in order to avoid initialization of GA on the main
-    // application thread and to postpone it as much as possible
-    private class GaInitializer extends AsyncTask<Void, Void, Ga> {
-        @NonNull
-        private final SharedPreferences prefs;
-
-        GaInitializer(@NonNull SharedPreferences prefs) {
-            this.prefs = prefs;
-        }
-
-        @Override
-        protected Ga doInBackground(Void... params) {
-            return ga.get();
-        }
-
-        @Override
-        protected void onPostExecute(@NonNull Ga ga) {
-            ga.reportInitially(prefs);
-        }
-    }
 
     @Inject
     @Named(AppModule.THREAD_INIT)
@@ -113,9 +91,6 @@ public class CalculatorApplication extends android.app.Application implements Sh
 
     @Inject
     ActivityLauncher launcher;
-
-    @Inject
-    Lazy<Ga> ga;
 
     @Nonnull
     private final TimingLogger timer = new TimingLogger("App", "onCreate");
@@ -169,7 +144,6 @@ public class CalculatorApplication extends android.app.Application implements Sh
                 warmUpEngine();
             }
         });
-        new GaInitializer(prefs).executeOnExecutor(initThread);
     }
 
     private void warmUpEngine() {

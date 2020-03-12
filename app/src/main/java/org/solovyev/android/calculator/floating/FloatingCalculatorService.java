@@ -36,7 +36,6 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import org.solovyev.android.Check;
 import org.solovyev.android.calculator.*;
-import org.solovyev.android.calculator.ga.Ga;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -58,8 +57,6 @@ public class FloatingCalculatorService extends Service implements FloatingViewLi
     Editor editor;
     @Inject
     Display display;
-    @Inject
-    Ga ga;
     @Inject
     SharedPreferences preferences;
 
@@ -139,7 +136,6 @@ public class FloatingCalculatorService extends Service implements FloatingViewLi
         if (isShowWindowIntent(intent)) {
             hideNotification();
             createView();
-            ga.onFloatingCalculatorOpened();
         } else if (isShowNotificationIntent(intent)) {
             showNotification();
         }

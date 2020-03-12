@@ -22,7 +22,6 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 import org.solovyev.android.calculator.ActivityLauncher;
-import org.solovyev.android.calculator.AdView;
 import org.solovyev.android.calculator.Engine;
 import org.solovyev.android.calculator.Preferences;
 import org.solovyev.android.calculator.Preferences.Gui.Theme;
@@ -52,8 +51,6 @@ import jscl.NumeralBase;
 public class PreferencesFragment extends org.solovyev.android.material.preferences.PreferencesFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static boolean SUPPORT_HEADERS = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
-    @Nullable
-    private AdView adView;
     @Inject
     SharedPreferences preferences;
     @Inject
@@ -133,12 +130,10 @@ public class PreferencesFragment extends org.solovyev.android.material.preferenc
                             supportProject.setEnabled(!purchased);
                             supportProject.setSelectable(!purchased);
                         }
-                        onShowAd(!purchased);
                     }
 
                     @Override
                     public void onError(int i, @Nonnull Exception e) {
-                        onShowAd(false);
                     }
                 });
             }
@@ -387,30 +382,6 @@ public class PreferencesFragment extends org.solovyev.android.material.preferenc
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (adView != null) {
-            adView.resume();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        if (adView != null) {
-            adView.pause();
-        }
-        super.onPause();
-    }
-
-    @Override
-    public void onDestroyView() {
-        if (adView != null) {
-            adView.destroy();
-        }
-        super.onDestroyView();
-    }
-
-    @Override
     public void onDestroy() {
         bus.unregister(this);
         preferences.unregisterOnSharedPreferenceChangeListener(this);
@@ -419,39 +390,6 @@ public class PreferencesFragment extends org.solovyev.android.material.preferenc
 
     private boolean supportsHeaders() {
         return SUPPORT_HEADERS;
-    }
-
-    protected void onShowAd(boolean show) {
-        if (!supportsHeaders()) {
-            return;
-        }
-        if (getView() == null) {
-            return;
-        }
-
-        final ListView listView = getListView();
-        if (show) {
-            if (adView != null) {
-                return;
-            }
-            adView = new AdView(getActivity());
-            adView.show();
-            try {
-                listView.addHeaderView(adView);
-            } catch (IllegalStateException e) {
-                // doesn't support header views
-                SUPPORT_HEADERS = false;
-                adView.hide();
-                adView = null;
-            }
-        } else {
-            if (adView == null) {
-                return;
-            }
-            listView.removeHeaderView(adView);
-            adView.hide();
-            adView = null;
-        }
     }
 
 }

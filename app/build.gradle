@@ -74,7 +74,7 @@ dependencies {
     implementation "com.android.support:support-v4:${versions.supportLib}"
     implementation "com.android.support:appcompat-v7:${versions.supportLib}"
     implementation "com.android.support:design:${versions.supportLib}"
-    implementation ':measure:'
+    implementation "javax.measure:jsr-275:0.9.1"
     implementation ':square-otto:1.3.9-SNAPSHOT'
     annotationProcessor ':square-otto:1.3.9-SNAPSHOT'
     annotationProcessor ':square-otto-compiler:1.3.9-SNAPSHOT'
@@ -85,9 +85,6 @@ dependencies {
     }
     implementation 'org.solovyev.android:checkout:1.2.1'
     implementation 'org.solovyev.android:material:0.1.4@aar'
-    implementation "com.google.android.gms:play-services-ads:${versions.gpsLib}"
-    implementation "com.google.android.gms:play-services-base:${versions.gpsLib}"
-    implementation "com.google.android.gms:play-services-analytics:${versions.gpsLib}"
     implementation(name: 'plotter', ext: 'aar')
     implementation 'com.google.guava:guava:20.0'
     implementation('org.simpleframework:simple-xml:2.6.1') {
@@ -108,7 +105,6 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:3.5.1'
     testImplementation 'org.mockito:mockito-all:1.9.5'
     testImplementation 'org.skyscreamer:jsonassert:1.2.3'
-    testImplementation(name: 'org.apache.http.legacy', ext: 'jar')
 
     androidTestImplementation "com.android.support:support-annotations:${versions.supportLib}"
     androidTestImplementation'com.android.support.test:runner:1.0.2'
@@ -160,56 +156,3 @@ signing {
 group = "org.solovyev.android"
 version = android.defaultConfig.versionName
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment ->
-                signing.signPom(deployment)
-                // for some reason Gradle :uploadArchives tries to upload null.txt.asc and null.map artifacts.
-                // As we don't want those let's filter them now (note that these files are not included in the
-                // list of project artifacts, so their origin is not clear)
-                def removeCond = { artifact -> return !artifact.classifier && (artifact.type == "map" || artifact.type == "txt.asc") }
-                deployment.artifacts.removeAll(removeCond)
-                deployment.attachedArtifacts.removeAll(removeCond)
-            }
-
-            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-
-            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-
-            pom.project {
-                artifactId = 'calculatorpp-app'
-                name 'Calculator++ Application'
-                packaging 'apk'
-                description 'Calculator for Android'
-                url 'https://github.com/serso/android-calculatorpp'
-
-                scm {
-                    url 'https://github.com/serso/android-calculatorpp'
-                    connection 'scm:https://serso@github.com/serso/android-calculatorpp.git'
-                    developerConnection 'scm:git://github.com/serso/android-calculatorpp.git'
-                }
-
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                        distribution 'repo'
-                    }
-                }
-
-                developers {
-                    developer {
-                        id 'se.solovyev'
-                        name 'Sergey Solovyev'
-                        email 'se.solovyev@gmail.com'
-                    }
-                }
-            }
-        }
-    }
-}

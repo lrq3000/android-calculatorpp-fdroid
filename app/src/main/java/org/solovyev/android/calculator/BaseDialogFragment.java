@@ -16,9 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import org.solovyev.android.calculator.ga.Ga;
 
 import javax.inject.Inject;
 
@@ -28,8 +25,6 @@ public abstract class BaseDialogFragment extends DialogFragment implements View.
 
     @Inject
     protected SharedPreferences preferences;
-    @Inject
-    Ga ga;
     @Inject
     Typeface typeface;
     @Nullable
@@ -79,9 +74,6 @@ public abstract class BaseDialogFragment extends DialogFragment implements View.
     @Override
     public void onResume() {
         super.onResume();
-        final Tracker tracker = ga.getTracker();
-        tracker.setScreenName(getClass().getSimpleName());
-        tracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     protected void onShowDialog(@NonNull AlertDialog dialog, boolean firstTime) {
