@@ -75,9 +75,9 @@ dependencies {
     implementation "com.android.support:appcompat-v7:${versions.supportLib}"
     implementation "com.android.support:design:${versions.supportLib}"
     implementation "javax.measure:jsr-275:0.9.1"
-    implementation ':square-otto:1.3.9-SNAPSHOT'
-    annotationProcessor ':square-otto:1.3.9-SNAPSHOT'
-    annotationProcessor ':square-otto-compiler:1.3.9-SNAPSHOT'
+    implementation 'com.squareup:otto:1.3.9-SNAPSHOT'
+    annotationProcessor 'com.squareup:otto:1.3.9-SNAPSHOT'
+    annotationProcessor 'com.squareup:otto-compiler:1.3.9-SNAPSHOT'
     annotationProcessor 'com.squareup:javapoet:1.9.0'
     implementation project(':dragbutton')
     implementation(project(':jscl')) {
