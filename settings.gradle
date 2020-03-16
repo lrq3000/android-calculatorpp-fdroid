@@ -1,1 +1,2 @@
 include ':app', ':jscl', ':translations', ':dragbutton'
+include ':measure'

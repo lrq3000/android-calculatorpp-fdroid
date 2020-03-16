@@ -74,7 +74,7 @@ dependencies {
     implementation "com.android.support:support-v4:${versions.supportLib}"
     implementation "com.android.support:appcompat-v7:${versions.supportLib}"
     implementation "com.android.support:design:${versions.supportLib}"
-    implementation "javax.measure:jsr-275:0.9.1"
+    implementation project(":measure")
     implementation 'com.squareup:otto:1.3.9-SNAPSHOT'
     annotationProcessor 'com.squareup:otto:1.3.9-SNAPSHOT'
     annotationProcessor 'com.squareup:otto-compiler:1.3.9-SNAPSHOT'
