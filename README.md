@@ -1,13 +1,12 @@
 # Calculator++
 
-Scientific calculator with sleek interface and powerful capabilities.
+Scientific calculator with sleek interface and powerful capabilities. This repository contains the version distributed by [F-Droid.org](https://f-droid.org/) and is a slightly modified version of [Sero's](https://github.com/serso/android-calculatorpp) original Calculator++ App. The modifications consist of removing pre-built binaries from the repository as well as removing Google Analytics. All credit besides the before mentioned modifications go to the original author. No further work is planned here from my side. 
 
-[<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png"
-      alt="Get it on Google Play"
-      height="70">](https://play.google.com/store/apps/details?id=org.solovyev.android.calculator)
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
       alt="Get it on F-Droid"
       height="70">](https://f-droid.org/en/packages/org.solovyev.android.calculator/)
+
+(The original version is also available via [Google Play](https://play.google.com/store/apps/details?id=org.solovyev.android.calculator))
 
 ![Demo how the app looks like](https://raw.githubusercontent.com/Bubu/android-calculatorpp/master/assets/intro.png "An image showing three phone screens, each showing one view of the calculator app")
 
