@@ -40,7 +40,7 @@ Several functions can be plotted simultaneously
 ## License
 
 This project is licensed under [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
-The license of this repo was added based on [the comment of the original author (Sergey Solovyev)](https://github.com/serso/android-calculatorpp/issues/184#issuecomment-317447082) on 2017-07-24 in which he wrote:
+The license of this repo was added based on [the comment of the original author (Sergey Solovyev)]([https://github.com/serso/android-calculatorpp/issues/184](https://web.archive.org/web/20210107155932/https://github.com/serso/android-calculatorpp/issues/184#issuecomment-317447082) on 2017-07-24 in which he wrote:
 
 > The project uses Apache License, Version 2.0 (see source files for example). Unfortunately, I didn't have time to declare the licence in a proper way
 
