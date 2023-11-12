@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-          package="org.solovyev.android.calculator"
-          android:installLocation="auto">
-
+    android:installLocation="auto">
+    <uses-permission android:name="com.android.vending.BILLING" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <!-- for onscreen -->
@@ -25,6 +24,7 @@
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
 
         <activity
+            android:exported="true"
             android:name=".CalculatorActivity"
             android:clearTaskOnLaunch="true"
             android:label="@string/cpp_app_name"
@@ -48,6 +48,7 @@
         </receiver>
 
         <activity
+            android:exported="false"
             android:name=".preferences.PreferencesActivity"
             android:label="@string/cpp_settings">
             <intent-filter>
@@ -113,6 +114,7 @@
             android:theme="@style/Cpp.Theme.Dialog" />
 
         <activity
+            android:exported="false"
             android:name=".plot.PlotActivity"
             android:label="@string/cpp_plotter">
             <intent-filter>
@@ -121,6 +123,7 @@
         </activity>
 
         <activity
+            android:exported="false"
             android:name=".wizard.WizardActivity"
             android:launchMode="singleTop"
             android:theme="@style/Cpp.Theme.Wizard">
@@ -137,6 +140,7 @@
         <!-- ONSCREEN CONFIG -->
 
         <activity
+            android:exported="true"
             android:name=".floating.FloatingCalculatorActivity"
             android:icon="@drawable/ic_launcher_window"
             android:label="@string/cpp_app_name_on_screen"
@@ -169,6 +173,7 @@
         <!-- WIDGET CONFIG -->
 
         <receiver
+            android:exported="true"
             android:name=".widget.CalculatorWidget"
             android:icon="@drawable/ic_launcher"
             android:label="@string/cpp_app_name">

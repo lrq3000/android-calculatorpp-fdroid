@@ -5,22 +5,31 @@ import static org.solovyev.android.calculator.Engine.Preferences.angleUnitName;
 import static org.solovyev.android.calculator.Engine.Preferences.numeralBaseName;
 import static org.solovyev.android.calculator.wizard.CalculatorWizards.DEFAULT_WIZARD_FLOW;
 import static org.solovyev.android.wizard.WizardUi.startWizard;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.support.v4.app.FragmentActivity;
 import android.util.SparseArray;
 import android.view.View;
-import android.widget.ListView;
-
+import android.view.ViewGroup;
+import android.view.ViewParent;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceDialogFragmentCompat;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-
+import java.util.Arrays;
+import java.util.List;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import jscl.AngleUnit;
+import jscl.JsclMathEngine;
+import jscl.NumeralBase;
 import org.solovyev.android.calculator.ActivityLauncher;
 import org.solovyev.android.calculator.Engine;
 import org.solovyev.android.calculator.Preferences;
@@ -37,20 +46,10 @@ import org.solovyev.android.prefs.StringPreference;
 import org.solovyev.android.wizard.Wizards;
 import org.solovyev.common.text.CharacterMapper;
 
-import java.util.Arrays;
-import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-
-import jscl.AngleUnit;
-import jscl.JsclMathEngine;
-import jscl.NumeralBase;
-
-public class PreferencesFragment extends org.solovyev.android.material.preferences.PreferencesFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
-
-    private static boolean SUPPORT_HEADERS = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
+public class PreferencesFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
+    @Nonnull
+    private static String ARG_PREFERENCES = "preferences";
     @Inject
     SharedPreferences preferences;
     @Inject
@@ -67,9 +66,11 @@ public class PreferencesFragment extends org.solovyev.android.material.preferenc
     Bus bus;
 
     @Nonnull
-    public static PreferencesFragment create(int preferences, int layout) {
+    public static PreferencesFragment create(int preferences) {
         final PreferencesFragment fragment = new PreferencesFragment();
-        fragment.setArguments(createArguments(preferences, layout, NO_THEME));
+        final Bundle args = new Bundle();
+        args.putInt(ARG_PREFERENCES, preferences);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -80,6 +81,12 @@ public class PreferencesFragment extends org.solovyev.android.material.preferenc
 
         preferences.registerOnSharedPreferenceChangeListener(this);
         bus.register(this);
+    }
+
+    @Override
+    public void onCreatePreferences(@androidx.annotation.Nullable Bundle savedInstanceState, @androidx.annotation.Nullable String rootKey) {
+        int preferencesResId = getArguments().getInt(ARG_PREFERENCES);
+        addPreferencesFromResource(preferencesResId);
     }
 
     private void setPreferenceIntent(int xml, @Nonnull PreferencesActivity.PrefDef def) {
@@ -93,11 +100,26 @@ public class PreferencesFragment extends org.solovyev.android.material.preferenc
         }
     }
 
+    /** @noinspection deprecation*/
+    @Override
+    public void onDisplayPreferenceDialog(@NonNull Preference preference) {
+        String fragmentTag = "fragment:" + preference.getKey();
+        if (getParentFragmentManager().findFragmentByTag(fragmentTag) != null) return;
+
+        if (preference instanceof PrecisionPreference) {
+            final PreferenceDialogFragmentCompat f = new PrecisionPreference.Dialog();
+            f.setTargetFragment(this, 0);
+            f.show(getParentFragmentManager(), fragmentTag);
+        } else {
+            super.onDisplayPreferenceDialog(preference);
+        }
+    }
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        final int preference = getPreferencesResId();
+        final int preference = getArguments().getInt(ARG_PREFERENCES);
         if (preference == R.xml.preferences) {
             prepareScreens();
             prepareIntroduction();
@@ -195,7 +217,7 @@ public class PreferencesFragment extends org.solovyev.android.material.preferenc
     }
 
     private void prepareNumberFormatExamplesPreference() {
-        final NumberFormatExamplesPreference preference = (NumberFormatExamplesPreference) preferenceManager.findPreference("numberFormat.examples");
+        final NumberFormatExamplesPreference preference = (NumberFormatExamplesPreference) getPreferenceManager().findPreference("numberFormat.examples");
         if (preference == null) {
             return;
         }
@@ -203,7 +225,7 @@ public class PreferencesFragment extends org.solovyev.android.material.preferenc
     }
 
     private void prepareSeparatorPreference() {
-        final ListPreference preference = (ListPreference) preferenceManager.findPreference(Engine.Preferences.Output.separator.getKey());
+        final ListPreference preference = (ListPreference) getPreferenceManager().findPreference(Engine.Preferences.Output.separator.getKey());
         preference.setSummary(separatorName(Engine.Preferences.Output.separator.getPreference(preferences)));
         preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -227,7 +249,7 @@ public class PreferencesFragment extends org.solovyev.android.material.preferenc
     }
 
     private void preparePrecisionPreference() {
-        final PrecisionPreference preference = (PrecisionPreference) preferenceManager.findPreference(Engine.Preferences.Output.precision.getKey());
+        final PrecisionPreference preference = (PrecisionPreference) getPreferenceManager().findPreference(Engine.Preferences.Output.precision.getKey());
         preference.setSummary(String.valueOf(Engine.Preferences.Output.precision.getPreference(preferences)));
         preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -239,7 +261,7 @@ public class PreferencesFragment extends org.solovyev.android.material.preferenc
     }
 
     private <E extends Enum<E> & PreferenceEntry> void prepareListPreference(@Nonnull final StringPreference<E> p, @Nonnull Class<E> type) {
-        final ListPreference preference = (ListPreference) preferenceManager.findPreference(p.getKey());
+        final ListPreference preference = (ListPreference) getPreferenceManager().findPreference(p.getKey());
         if (preference == null) {
             return;
         }
@@ -262,7 +284,7 @@ public class PreferencesFragment extends org.solovyev.android.material.preferenc
     }
 
     private void prepareMode() {
-        final ListPreference mode = (ListPreference) preferenceManager.findPreference(Preferences.Gui.mode.getKey());
+        final ListPreference mode = (ListPreference) getPreferenceManager().findPreference(Preferences.Gui.mode.getKey());
         mode.setSummary(Preferences.Gui.getMode(preferences).name);
         mode.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -274,7 +296,7 @@ public class PreferencesFragment extends org.solovyev.android.material.preferenc
     }
 
     private void prepareAngles() {
-        final ListPreference angles = (ListPreference) preferenceManager.findPreference(Engine.Preferences.angleUnit.getKey());
+        final ListPreference angles = (ListPreference) getPreferenceManager().findPreference(Engine.Preferences.angleUnit.getKey());
         angles.setSummary(angleUnitName(Engine.Preferences.angleUnit.getPreference(preferences)));
         angles.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -286,7 +308,7 @@ public class PreferencesFragment extends org.solovyev.android.material.preferenc
     }
 
     private void prepareRadix() {
-        final ListPreference radix = (ListPreference) preferenceManager.findPreference(Engine.Preferences.numeralBase.getKey());
+        final ListPreference radix = (ListPreference) getPreferenceManager().findPreference(Engine.Preferences.numeralBase.getKey());
         radix.setSummary(numeralBaseName(Engine.Preferences.numeralBase.getPreference(preferences)));
         radix.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -301,7 +323,7 @@ public class PreferencesFragment extends org.solovyev.android.material.preferenc
         if (preference != R.xml.preferences_appearance) {
             return;
         }
-        final ListPreference theme = (ListPreference) preferenceManager.findPreference(Preferences.Gui.theme.getKey());
+        final ListPreference theme = (ListPreference) getPreferenceManager().findPreference(Preferences.Gui.theme.getKey());
         final FragmentActivity context = getActivity();
         populate(theme,
                 Theme.material_theme,
@@ -344,7 +366,7 @@ public class PreferencesFragment extends org.solovyev.android.material.preferenc
             return;
         }
 
-        final ListPreference language = (ListPreference) preferenceManager.findPreference(Preferences.Gui.language.getKey());
+        final ListPreference language = (ListPreference) getPreferenceManager().findPreference(Preferences.Gui.language.getKey());
         populate(language, languages.getList());
         language.setSummary(languages.getCurrent().getName(getActivity()));
         language.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -387,9 +409,4 @@ public class PreferencesFragment extends org.solovyev.android.material.preferenc
         preferences.unregisterOnSharedPreferenceChangeListener(this);
         super.onDestroy();
     }
-
-    private boolean supportsHeaders() {
-        return SUPPORT_HEADERS;
-    }
-
 }

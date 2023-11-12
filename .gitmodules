@@ -1,0 +1,6 @@
+[submodule "plotter"]
+	path = plotter
+	url = https://git.bubu1.eu/Bubu/android-plotter.git
+[submodule "otto"]
+	path = otto
+	url = https://git.bubu1.eu/Bubu/serso-otto.git
