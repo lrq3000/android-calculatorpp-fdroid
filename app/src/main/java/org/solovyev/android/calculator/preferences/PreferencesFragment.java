@@ -5,31 +5,24 @@ import static org.solovyev.android.calculator.Engine.Preferences.angleUnitName;
 import static org.solovyev.android.calculator.Engine.Preferences.numeralBaseName;
 import static org.solovyev.android.calculator.wizard.CalculatorWizards.DEFAULT_WIZARD_FLOW;
 import static org.solovyev.android.wizard.WizardUi.startWizard;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceDialogFragmentCompat;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.recyclerview.widget.RecyclerView;
+
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import java.util.Arrays;
-import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-import jscl.AngleUnit;
-import jscl.JsclMathEngine;
-import jscl.NumeralBase;
+
 import org.solovyev.android.calculator.ActivityLauncher;
 import org.solovyev.android.calculator.Engine;
 import org.solovyev.android.calculator.Preferences;
@@ -38,13 +31,19 @@ import org.solovyev.android.calculator.R;
 import org.solovyev.android.calculator.feedback.FeedbackReporter;
 import org.solovyev.android.calculator.language.Language;
 import org.solovyev.android.calculator.language.Languages;
-import org.solovyev.android.checkout.BillingRequests;
-import org.solovyev.android.checkout.Checkout;
-import org.solovyev.android.checkout.ProductTypes;
-import org.solovyev.android.checkout.RequestListener;
 import org.solovyev.android.prefs.StringPreference;
 import org.solovyev.android.wizard.Wizards;
 import org.solovyev.common.text.CharacterMapper;
+
+import java.util.Arrays;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+
+import jscl.AngleUnit;
+import jscl.JsclMathEngine;
+import jscl.NumeralBase;
 
 
 public class PreferencesFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -100,7 +99,9 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Sha
         }
     }
 
-    /** @noinspection deprecation*/
+    /**
+     * @noinspection deprecation
+     */
     @Override
     public void onDisplayPreferenceDialog(@NonNull Preference preference) {
         String fragmentTag = "fragment:" + preference.getKey();
@@ -125,7 +126,6 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Sha
             prepareIntroduction();
             prepareReportBug();
             prepareAbout();
-            prepareSupportProject();
             prepareMode();
             prepareAngles();
             prepareRadix();
@@ -140,26 +140,6 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Sha
 
         prepareLanguagePreference(preference);
         prepareThemePreference(preference);
-
-        getCheckout().whenReady(new Checkout.EmptyListener() {
-            @Override
-            public void onReady(@Nonnull BillingRequests requests) {
-                requests.isPurchased(ProductTypes.IN_APP, "ad_free", new RequestListener<Boolean>() {
-                    @Override
-                    public void onSuccess(@Nonnull Boolean purchased) {
-                        final Preference supportProject = findPreference("prefs.supportProject");
-                        if (supportProject != null) {
-                            supportProject.setEnabled(!purchased);
-                            supportProject.setSelectable(!purchased);
-                        }
-                    }
-
-                    @Override
-                    public void onError(int i, @Nonnull Exception e) {
-                    }
-                });
-            }
-        });
     }
 
     private void prepareReportBug() {
@@ -168,20 +148,6 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Sha
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 feedbackReporter.report();
-                return true;
-            }
-        });
-
-    }
-
-    private void prepareSupportProject() {
-        final Preference supportProject = findPreference("prefs.supportProject");
-        supportProject.setEnabled(false);
-        supportProject.setSelectable(false);
-        supportProject.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getActivity(), PurchaseDialogActivity.class));
                 return true;
             }
         });
@@ -377,11 +343,6 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Sha
                 return true;
             }
         });
-    }
-
-    @Nonnull
-    private Checkout getCheckout() {
-        return ((PreferencesActivity) getActivity()).getCheckout();
     }
 
     @Override

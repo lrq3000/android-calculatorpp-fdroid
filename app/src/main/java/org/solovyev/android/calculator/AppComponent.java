@@ -1,6 +1,5 @@
 package org.solovyev.android.calculator;
 
-import dagger.Component;
 import org.solovyev.android.calculator.converter.ConverterFragment;
 import org.solovyev.android.calculator.errors.FixableErrorFragment;
 import org.solovyev.android.calculator.errors.FixableErrorsActivity;
@@ -20,7 +19,6 @@ import org.solovyev.android.calculator.plot.PlotEditFunctionFragment;
 import org.solovyev.android.calculator.plot.PlotFunctionsFragment;
 import org.solovyev.android.calculator.preferences.PreferencesActivity;
 import org.solovyev.android.calculator.preferences.PreferencesFragment;
-import org.solovyev.android.calculator.preferences.PurchaseDialogActivity;
 import org.solovyev.android.calculator.variables.EditVariableFragment;
 import org.solovyev.android.calculator.variables.VariablesFragment;
 import org.solovyev.android.calculator.view.Tabs;
@@ -30,6 +28,8 @@ import org.solovyev.android.calculator.wizard.WizardActivity;
 import org.solovyev.android.calculator.wizard.WizardFragment;
 
 import javax.inject.Singleton;
+
+import dagger.Component;
 
 @Singleton
 @Component(modules = AppModule.class)
@@ -54,7 +54,6 @@ public interface AppComponent {
     void inject(WidgetReceiver receiver);
     void inject(DisplayFragment fragment);
     void inject(KeyboardFragment fragment);
-    void inject(PurchaseDialogActivity activity);
     void inject(PreferencesActivity activity);
     void inject(BaseKeyboardUi ui);
     void inject(FloatingCalculatorView view);

@@ -24,13 +24,7 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:key="screen-main">
-
-    <Preference
-        android:defaultValue="false"
-        android:key="prefs.supportProject"
-        android:summary="@string/c_calc_ad_free_summary"
-        android:title="@string/c_calc_ad_free_title" />
-
+    
     <PreferenceCategory
         android:key="category-basic"
         android:title="@string/cpp_prefs_basic">

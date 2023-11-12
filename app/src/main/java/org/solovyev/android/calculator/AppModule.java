@@ -7,19 +7,15 @@ import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
 import android.util.Log;
 
-import com.squareup.otto.Bus;
+import androidx.annotation.NonNull;
 
+import com.squareup.otto.Bus;
 import com.squareup.otto.GeneratedHandlerFinder;
+
 import org.solovyev.android.calculator.language.Languages;
 import org.solovyev.android.calculator.wizard.CalculatorWizards;
-import org.solovyev.android.checkout.Billing;
-import org.solovyev.android.checkout.Checkout;
-import org.solovyev.android.checkout.Inventory;
-import org.solovyev.android.checkout.RobotmediaDatabase;
-import org.solovyev.android.checkout.RobotmediaInventory;
 import org.solovyev.android.plotter.Plot;
 import org.solovyev.android.plotter.Plotter;
 import org.solovyev.android.wizard.Wizards;
@@ -31,7 +27,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -180,28 +175,6 @@ public class AppModule {
     @Singleton
     JsclMathEngine provideJsclMathEngine() {
         return JsclMathEngine.getInstance();
-    }
-
-    @Provides
-    @Singleton
-    Billing provideBilling() {
-        return new Billing(application, new Billing.DefaultConfiguration() {
-            @Nonnull
-            @Override
-            public String getPublicKey() {
-                return CalculatorSecurity.getPK();
-            }
-
-            @Nullable
-            @Override
-            public Inventory getFallbackInventory(@Nonnull Checkout checkout, @Nonnull Executor onLoadExecutor) {
-                if (RobotmediaDatabase.exists(application)) {
-                    return new RobotmediaInventory(checkout, onLoadExecutor);
-                } else {
-                    return null;
-                }
-            }
-        });
     }
 
     @Singleton
